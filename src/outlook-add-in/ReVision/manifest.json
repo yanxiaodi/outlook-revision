@@ -65,7 +65,7 @@
                     "id": "TaskPaneRuntime",
                     "type": "general",
                     "code": {
-                        "page": "https://localhost:4200/taskpane.html"
+                        "page": "https://localhost:4200/index.html"
                     },
                     "lifetime": "short",
                     "actions": [
