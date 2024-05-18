@@ -29,7 +29,7 @@ export const SettingsContext = React.createContext<{
   setSettings: () => {},
 });
 
-const App: React.FC<AppProps> = (props: AppProps) => {
+const App: React.FC<AppProps> = (_props: AppProps) => {
   const styles = useStyles();
   // The list items are static and won't change at runtime,
   // so this should be an ordinary const, not a part of state.
@@ -108,7 +108,7 @@ const App: React.FC<AppProps> = (props: AppProps) => {
   return (
     <SettingsContext.Provider value={{ settings, setSettings }}>
       <div className={styles.root}>
-        <Header logo="assets/logo-filled.png" title={props.title} message="Welcome" />
+        {/* <Header logo="assets/logo-filled.png" title={props.title} message="Welcome" /> */}
         {/* <HeroList message="Discover what this add-in can do for you today!" items={listItems} /> */}
         <Settings languages={languageList} tones={toneList} />
         <TextInsertion insertText={insertText} />
