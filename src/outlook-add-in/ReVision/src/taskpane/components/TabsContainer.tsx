@@ -10,6 +10,7 @@ import {
   bundleIcon,
 } from "@fluentui/react-icons";
 import type { SelectTabData, SelectTabEvent, TabValue } from "@fluentui/react-components";
+import TranslatePage from "./TranslatePage";
 
 const TranslateIcon = bundleIcon(TranslateAuto20Regular, TranslateAuto20Filled);
 const ComposeIcon = bundleIcon(Compose20Regular, Compose20Filled);
@@ -43,11 +44,12 @@ const useStyles = makeStyles({
     justifyContent: "center",
   },
   panels: {
-    ...shorthands.padding(0, "10px"),
+    //...shorthands.padding(0, "10px"),
     "& th": {
       textAlign: "left",
-      ...shorthands.padding(0, "30px", 0, 0),
+      //...shorthands.padding(0, "10px", 0, 0),
     },
+    width: "100%",
   },
   propsTable: {
     "& td:first-child": {
@@ -71,8 +73,7 @@ const TabContainer: React.FC = () => {
   const TranslateTab = React.memo(() => {
     return (
       <section>
-        <h2>Translate</h2>
-        <p>Translate the email content to the user's language.</p>
+        <TranslatePage />
       </section>
     );
   });
