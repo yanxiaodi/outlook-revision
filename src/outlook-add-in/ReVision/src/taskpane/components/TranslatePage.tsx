@@ -16,6 +16,13 @@ import { getEmailText, getEmailId } from "../services/emailServices";
 import { TranslateRequest } from "../models/translateRequest";
 import { TranslateResponse } from "../models/translateResponse";
 import { SettingsContext } from "./App";
+import { GlobalStateContext } from "./TabsContainer";
+
+export interface TranslatePageState {
+  input: string;
+  output: string;
+  summary: string;
+}
 
 const useStyles = makeStyles({
   container: {
@@ -56,16 +63,17 @@ const TranslatePage: React.FC = () => {
   const toasterId = useId("toaster");
   const { dispatchToast } = useToastController(toasterId);
   //const [intent, setIntent] = React.useState<ToastIntent>("success");
-  const [input, setInput] = useState("");
-  const [output, setOutput] = useState("");
-  const [summary, setSummary] = useState("");
+  const { settings, setSettings } = React.useContext(SettingsContext);
+  const { translatePageState, setGlobalState } = React.useContext(GlobalStateContext);
+  const [input, setInput] = useState(translatePageState.input);
+  const [output, setOutput] = useState(translatePageState.output);
+  const [summary, setSummary] = useState(translatePageState.summary);
   const [isLoading, setIsLoading] = useState(false);
   //const [emailId, setEmailId] = useState("");
 
   const styles = useStyles();
 
-  const { settings, setSettings } = React.useContext(SettingsContext);
-
+  
   const translate = async () => {
     try {
       setIsLoading(true);
@@ -101,6 +109,16 @@ const TranslatePage: React.FC = () => {
   //       setSummary(savedData.summary);
   //     }
   //   }, [emailId]);
+  useEffect(() => {
+    setGlobalState((prevState) => ({
+      ...prevState,
+      translatePageState: {
+        input,
+        output,
+        summary,
+      },
+    }));
+  }, [input, output, summary]);
 
   const handleInputTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);

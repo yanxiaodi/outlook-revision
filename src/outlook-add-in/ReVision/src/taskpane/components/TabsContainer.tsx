@@ -10,7 +10,7 @@ import {
   bundleIcon,
 } from "@fluentui/react-icons";
 import type { SelectTabData, SelectTabEvent, TabValue } from "@fluentui/react-components";
-import TranslatePage from "./TranslatePage";
+import TranslatePage, { TranslatePageState } from "./TranslatePage";
 
 const TranslateIcon = bundleIcon(TranslateAuto20Regular, TranslateAuto20Filled);
 const ComposeIcon = bundleIcon(Compose20Regular, Compose20Filled);
@@ -61,6 +61,32 @@ const useStyles = makeStyles({
   },
 });
 
+const defaultGlobalState: GlobalState = {
+    translatePageState: {
+        input: "",
+        output: "",
+        summary: "",
+    },
+    setGlobalState: () => {},
+};
+
+export const GlobalStateContext = React.createContext(defaultGlobalState);
+
+export interface GlobalState {
+    translatePageState: TranslatePageState;
+    setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
+}
+
+export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
+    const [state, setGlobalState] = React.useState(defaultGlobalState);
+
+    return (
+        <GlobalStateContext.Provider value={{ ...state, setGlobalState }}>
+            {children}
+        </GlobalStateContext.Provider>
+    );
+};
+
 const TabContainer: React.FC = () => {
   const styles = useStyles();
 
@@ -97,7 +123,7 @@ const TabContainer: React.FC = () => {
   });
 
   return (
-    <section>
+    <GlobalStateProvider>
       {/* <h1>Tabs</h1> */}
       <div className={styles.root}>
         <div className={styles.tabListContainer}>
@@ -119,7 +145,7 @@ const TabContainer: React.FC = () => {
           {selectedValue === "tab-revise" && <ReviseTab />}
         </div>
       </div>
-    </section>
+    </GlobalStateProvider>
   );
 };
 
