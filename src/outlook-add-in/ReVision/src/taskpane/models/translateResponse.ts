@@ -1,8 +1,8 @@
 export class TranslateResponse {
-  translatedText: string;
+  text: string;
   summary: string;
-  constructor(translatedText: string, summary: string) {
-    this.translatedText = translatedText;
+  constructor(text: string, summary: string) {
+    this.text = text;
     this.summary = summary;
   }
 }

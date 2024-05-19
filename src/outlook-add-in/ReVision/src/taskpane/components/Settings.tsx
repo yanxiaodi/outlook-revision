@@ -62,8 +62,6 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
     if (option) {
       setSettings((prevSettings) => {
         const newSettings = { ...prevSettings, userLanguage: option.optionValue };
-        console.log(newSettings);
-
         localStorage.setItem("settings", JSON.stringify(newSettings));
         return newSettings;
       });

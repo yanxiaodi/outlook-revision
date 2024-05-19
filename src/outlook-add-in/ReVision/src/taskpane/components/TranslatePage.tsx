@@ -1,8 +1,21 @@
 import React, { useState, useEffect } from "react";
-import { makeStyles, Textarea, Button, Field, tokens } from "@fluentui/react-components";
+import {
+  makeStyles,
+  Textarea,
+  Button,
+  Field,
+  Toaster,
+  useToastController,
+  Toast,
+  useId,
+  ToastTitle,
+  ToastIntent,
+  Spinner,
+} from "@fluentui/react-components";
 import { getEmailText, getEmailId } from "../services/emailServices";
 import { TranslateRequest } from "../models/translateRequest";
 import { TranslateResponse } from "../models/translateResponse";
+import { SettingsContext } from "./App";
 
 const useStyles = makeStyles({
   container: {
@@ -15,7 +28,13 @@ const useStyles = makeStyles({
     marginRight: "10px",
     maxWidth: "100%",
   },
-  buttonContainer:{
+  textField: {
+    wordWrap: "break-word",
+    overflowWrap: "break-word",
+    whiteSpace: "pre-wrap",
+    width: "100%",
+  },
+  buttonContainer: {
     display: "flex",
     justifyContent: "center",
     alignItems: "center",
@@ -25,55 +44,75 @@ const useStyles = makeStyles({
     alignContent: "center",
     justifyContent: "center",
   },
+  spinner: {
+    display: "flex",
+    alignContent: "center",
+    justifyContent: "center",
+    marginTop: "10px",
+  },
 });
 
 const TranslatePage: React.FC = () => {
+  const toasterId = useId("toaster");
+  const { dispatchToast } = useToastController(toasterId);
+  //const [intent, setIntent] = React.useState<ToastIntent>("success");
   const [input, setInput] = useState("");
   const [output, setOutput] = useState("");
   const [summary, setSummary] = useState("");
-  const [emailId, setEmailId] = useState("");
+  const [isLoading, setIsLoading] = useState(false);
+  //const [emailId, setEmailId] = useState("");
 
   const styles = useStyles();
 
+  const { settings, setSettings } = React.useContext(SettingsContext);
+
   const translate = async () => {
     try {
-      const emailBody = await getEmailText();
-      const translateRequest = new TranslateRequest("en", emailBody as string);
-      const response = await fetch("https://fakeapi.com/translate", {
+      setIsLoading(true);
+      let inputText = input;
+      if (!input || input.trim() === "") {
+        const emailBody = (await getEmailText()) as string;
+        setInput(emailBody);
+        inputText = emailBody;
+      }
+      const translateRequest = new TranslateRequest(settings.userLanguage, inputText);
+      const response = await fetch("http://localhost:5018/api/Outlook/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(translateRequest),
       });
       const data: TranslateResponse = await response.json();
-      setOutput(data.translatedText);
+      setOutput(data.text);
       setSummary(data.summary);
-      setEmailId(getEmailId());
-      localStorage.setItem(emailId, JSON.stringify({ translatedText: data.translatedText, summary: data.summary }));
+      notify("success", "Text translated successfully.");
+      //setEmailId(getEmailId());
+      //   localStorage.setItem(emailId, JSON.stringify({ translatedText: data.text, summary: data.summary }));
     } catch (error) {
-      console.error(error);
-      // Show a toast notification
-      Office.context.ui.displayDialogAsync(
-        "https://myAddin.com/error.html",
-        { height: 30, width: 20, displayInIframe: true },
-        function (asyncResult) {
-          if (asyncResult.status === Office.AsyncResultStatus.Failed) {
-            console.error("Failed to show error dialog: " + asyncResult.error.message);
-          }
-        }
-      );
+      notify("error", "An error occurred while translating the text.");
+    } finally {
+      setIsLoading(false);
     }
   };
 
-  useEffect(() => {
-    const savedData = JSON.parse(localStorage.getItem(emailId));
-    if (savedData) {
-      setOutput(savedData.translatedText);
-      setSummary(savedData.summary);
-    }
-  }, [emailId]);
+  //   useEffect(() => {
+  //     const savedData = JSON.parse(localStorage.getItem(emailId));
+  //     if (savedData) {
+  //       setOutput(savedData.translatedText);
+  //       setSummary(savedData.summary);
+  //     }
+  //   }, [emailId]);
 
   const handleInputTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
+  };
+
+  const notify = (intent: ToastIntent, message: string) => {
+    dispatchToast(
+      <Toast>
+        <ToastTitle>{message}</ToastTitle>
+      </Toast>,
+      { pauseOnWindowBlur: true, intent: intent }
+    );
   };
 
   return (
@@ -84,19 +123,26 @@ const TranslatePage: React.FC = () => {
           placeholder="Leave blank to auto translate the current email."
           value={input}
           onChange={handleInputTextChange}
+          rows={7}
         />
       </Field>
       <div className={styles.buttonContainer}>
-        <Button appearance="primary" className={styles.button} onClick={translate}>
+        <Button appearance="primary" className={styles.button} onClick={translate} disabled={isLoading}>
           Translate
         </Button>
       </div>
-      <Field className={styles.textAreaField} size="large" label="Translated Text">
-        <Textarea resize="vertical" readOnly value={output} />
-      </Field>
-      <Field className={styles.textAreaField} size="large" label="Summary">
-        <Textarea resize="vertical" readOnly value={summary} />
-      </Field>
+      {isLoading && <Spinner className={styles.spinner} />}
+      {summary && (
+        <Field className={styles.textField} size="large" label="Summary">
+          <p className={styles.textField}>{summary}</p>
+        </Field>
+      )}
+      {output && (
+        <Field className={styles.textField} size="large" label="Translated Text">
+          <p>{output}</p>
+        </Field>
+      )}
+      <Toaster toasterId={toasterId} />
     </div>
   );
 };
