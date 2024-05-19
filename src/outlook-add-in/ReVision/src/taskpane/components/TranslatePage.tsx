@@ -39,6 +39,10 @@ const useStyles = makeStyles({
     wordWrap: "break-word",
     overflowWrap: "break-word",
     whiteSpace: "pre-wrap",
+    marginLeft: "10px",
+    marginTop: "10px",
+    marginBottom: "10px",
+    marginRight: "10px",
     width: "100%",
   },
   buttonContainer: {
