@@ -100,7 +100,7 @@ const App: React.FC<AppProps> = (_props: AppProps) => {
     return savedSettings
       ? JSON.parse(savedSettings)
       : {
-          //emailLanguage: "en",
+          emailLanguage: "en",
           userLanguage: "zh",
           writingTone: "Casual",
         };
