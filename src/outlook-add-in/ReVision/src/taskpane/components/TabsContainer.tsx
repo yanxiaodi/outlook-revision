@@ -11,6 +11,7 @@ import {
 } from "@fluentui/react-icons";
 import type { SelectTabData, SelectTabEvent, TabValue } from "@fluentui/react-components";
 import TranslatePage, { TranslatePageState } from "./TranslatePage";
+import ComposePage, { ComposePageState } from "./ComposePage";
 
 const TranslateIcon = bundleIcon(TranslateAuto20Regular, TranslateAuto20Filled);
 const ComposeIcon = bundleIcon(Compose20Regular, Compose20Filled);
@@ -67,6 +68,11 @@ const defaultGlobalState: GlobalState = {
         output: "",
         summary: "",
     },
+    composePageState: {
+        currentEmail: "",
+        input: "",
+        output: "",
+    },
     setGlobalState: () => {},
 };
 
@@ -74,12 +80,12 @@ export const GlobalStateContext = React.createContext(defaultGlobalState);
 
 export interface GlobalState {
     translatePageState: TranslatePageState;
+    composePageState: ComposePageState;
     setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
 }
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
     const [state, setGlobalState] = React.useState(defaultGlobalState);
-
     return (
         <GlobalStateContext.Provider value={{ ...state, setGlobalState }}>
             {children}
@@ -107,8 +113,7 @@ const TabContainer: React.FC = () => {
   const ComposeTab = React.memo(() => {
     return (
       <section>
-        <h2>Compose</h2>
-        <p>Compose the email content in the user's language.</p>
+        <ComposePage />
       </section>
     );
   });

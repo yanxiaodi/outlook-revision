@@ -46,4 +46,50 @@ public class ReVisionService(Kernel kernel) : IReVisionService
         return response;
 
     }
+
+    public async Task<ComposeResponse> ComposeAsync(ComposeRequest request)
+    {
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+        var currentEmailText = string.IsNullOrWhiteSpace(request.CurrentEmail)
+            ? ""
+            : $"""
+               You need to reply to an email. The current email text is:
+
+               ###
+               {request.CurrentEmail}
+               ###
+
+               """;
+        var userInput = string.IsNullOrWhiteSpace(request.Input)
+            ? ""
+            : $"""
+               The user has provided the following input:
+
+               ###
+               {request.Input}
+               ###
+
+               """;
+        var chatMessages = new ChatHistory($"""
+                                            You are a friendly email assistant that helps the user manage emails.
+                                            Compose an email in {request.TargetLanguage}.
+                                            The tone of the email should be {request.WritingTone}.
+                                            {currentEmailText}
+                                            {userInput}
+                                            Compose an email based on the current email and the user's input.
+                                            If the current email is not provided, compose an email based on the user's input.
+                                            If the user's input is empty, compose an email to reply to the current email.
+                                            The email should be concise and to the point.
+                                            """);
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
+        {
+            ToolCallBehavior = ToolCallBehavior.AutoInvokeKernelFunctions
+        };
+        var composeResponse = await chatCompletionService.GetChatMessageContentsAsync(
+            chatMessages,
+            promptExecutionSettings,
+            kernel);
+        return new ComposeResponse(composeResponse.FirstOrDefault()?.Content ?? "");
+    }
+
 }

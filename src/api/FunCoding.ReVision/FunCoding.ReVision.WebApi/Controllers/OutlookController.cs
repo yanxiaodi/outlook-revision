@@ -20,4 +20,22 @@ public class OutlookController(IReVisionService revisionService) : ControllerBas
         var response = await revisionService.TranslateAsync(request);
         return Ok(response);
     }
+
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [HttpPost("compose")]
+    public async Task<ActionResult<ComposeResponse>> ComposeAsync(ComposeRequest request)
+    {
+        if (string.IsNullOrWhiteSpace(request.TargetLanguage))
+        {
+            return BadRequest("Target language is required");
+        }
+
+        if (string.IsNullOrWhiteSpace(request.Input) && string.IsNullOrWhiteSpace(request.CurrentEmail))
+        {
+            return BadRequest("Input or current email is required");
+        }
+        var response = await revisionService.ComposeAsync(request);
+        return Ok(response);
+    }
 }
