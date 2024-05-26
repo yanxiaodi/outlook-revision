@@ -12,6 +12,7 @@ import {
 import type { SelectTabData, SelectTabEvent, TabValue } from "@fluentui/react-components";
 import TranslatePage, { TranslatePageState } from "./TranslatePage";
 import ComposePage, { ComposePageState } from "./ComposePage";
+import { EmailMode, getCurrentMode } from "../services/emailServices";
 
 const TranslateIcon = bundleIcon(TranslateAuto20Regular, TranslateAuto20Filled);
 const ComposeIcon = bundleIcon(Compose20Regular, Compose20Filled);
@@ -94,7 +95,9 @@ export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ c
 const TabContainer: React.FC = () => {
   const styles = useStyles();
 
-  const [selectedValue, setSelectedValue] = React.useState<TabValue>("conditions");
+  const isComposeMode = getCurrentMode() === EmailMode.MessageCompose;
+
+  const [selectedValue, setSelectedValue] = React.useState<TabValue>(isComposeMode ? "tab-compose" : "tab-translate");
 
   const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
     setSelectedValue(data.value);
@@ -134,9 +137,11 @@ const TabContainer: React.FC = () => {
             <Tab id="Translate" value="tab-translate" icon={<TranslateIcon />}>
               Translate
             </Tab>
-            <Tab id="Compose" value="tab-compose" icon={<ComposeIcon />}>
-              Compose
-            </Tab>
+            {isComposeMode && (
+              <Tab id="Compose" value="tab-compose" icon={<ComposeIcon />}>
+                Compose
+              </Tab>
+            )}
             <Tab id="Revise" value="tab-revise" icon={<ReviseIcon />}>
               Revise
             </Tab>
