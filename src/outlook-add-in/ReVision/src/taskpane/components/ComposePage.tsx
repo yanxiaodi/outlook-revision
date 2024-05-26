@@ -11,17 +11,27 @@ import {
   ToastTitle,
   ToastIntent,
   Spinner,
+  Input,
 } from "@fluentui/react-components";
 import { SettingsContext } from "./App";
 import { GlobalStateContext } from "./TabsContainer";
-import { getEmailText, insertToComposeBody, isReadMode } from "../services/emailServices";
+import {
+  EmailMode,
+  getCurrentMode,
+  getEmailSubject,
+  getEmailText,
+  insertToComposeBody,
+  insertToComposeSubject,
+} from "../services/emailServices";
 import { ComposeRequest } from "../models/composeRequest";
 import { ComposeResponse } from "../models/composeResponse";
 
 export interface ComposePageState {
-  currentEmail: string;
+  currentEmailSubject: string;
+  currentEmailBody: string;
   input: string;
-  output: string;
+  subject: string;
+  body: string;
 }
 
 const useStyles = makeStyles({
@@ -54,6 +64,8 @@ const useStyles = makeStyles({
     display: "flex",
     alignContent: "center",
     justifyContent: "center",
+    marginLeft: "5px",
+    marginRight: "5px",
   },
   spinner: {
     display: "flex",
@@ -68,9 +80,11 @@ const ComposePage: React.FC = () => {
   const { dispatchToast } = useToastController(toasterId);
   const { settings, setSettings } = React.useContext(SettingsContext);
   const { composePageState, setGlobalState } = React.useContext(GlobalStateContext);
-  const [currentEmail, setCurrentEmail] = useState(composePageState.currentEmail);
+  const [currentEmailSubject, setCurrentEmailSubject] = useState(composePageState.subject);
+  const [currentEmailBody, setCurrentEmailBody] = useState(composePageState.currentEmailBody);
   const [input, setInput] = useState(composePageState.input);
-  const [output, setOutput] = useState(composePageState.output);
+  const [subject, setSubject] = useState(composePageState.subject);
+  const [body, setBody] = useState(composePageState.body);
   const [isLoading, setIsLoading] = useState(false);
 
   const styles = useStyles();
@@ -78,18 +92,32 @@ const ComposePage: React.FC = () => {
   const compose = async () => {
     try {
       setIsLoading(true);
-      let currentEmailText = currentEmail;
-      if (!currentEmail || currentEmail.trim() === "") {
+
+      let currentEmailSubjectText = currentEmailSubject;
+      if (!currentEmailSubjectText || currentEmailSubjectText.trim() === "") {
+        const emailSubject = (await getEmailSubject()) as string;
+        setCurrentEmailSubject(emailSubject);
+        currentEmailSubjectText = emailSubject;
+      }
+
+      let currentEmailBodyText = currentEmailBody;
+      if (!currentEmailBodyText || currentEmailBodyText.trim() === "") {
         const emailBody = (await getEmailText()) as string;
-        setCurrentEmail(emailBody);
-        currentEmailText = emailBody;
+        setCurrentEmailBody(emailBody);
+        currentEmailBodyText = emailBody;
       }
 
       let inputText = input;
       let targetLanguage = settings.emailLanguage;
       let writingTone = settings.writingTone;
 
-      const composeRequest = new ComposeRequest(currentEmailText, inputText, targetLanguage, writingTone);
+      const composeRequest = new ComposeRequest(
+        currentEmailSubjectText,
+        currentEmailBodyText,
+        inputText,
+        targetLanguage,
+        writingTone
+      );
 
       const response = await fetch("http://localhost:5018/api/Outlook/compose", {
         method: "POST",
@@ -97,7 +125,8 @@ const ComposePage: React.FC = () => {
         body: JSON.stringify(composeRequest),
       });
       const data: ComposeResponse = await response.json();
-      setOutput(data.text);
+      setSubject(data.subject);
+      setBody(data.body);
       notify("success", "Email composed successfully.");
     } catch (error) {
       notify("error", "An error occurred while composing the email.");
@@ -110,19 +139,25 @@ const ComposePage: React.FC = () => {
     setGlobalState((prevState) => ({
       ...prevState,
       composePageState: {
-        currentEmail,
+        currentEmailSubject: currentEmailSubject,
+        currentEmailBody: currentEmailBody,
         input,
-        output,
+        subject: subject,
+        body: body,
       },
     }));
-  }, [input, output]);
+  }, [input, subject, body]);
 
   const handleInputTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setInput(event.target.value);
   };
 
-  const handleOutputTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setOutput(event.target.value);
+  const handleSubjectTextChange = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    setSubject(event.target.value);
+  };
+
+  const handleBodyTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setBody(event.target.value);
   };
 
   const notify = (intent: ToastIntent, message: string) => {
@@ -136,10 +171,23 @@ const ComposePage: React.FC = () => {
 
   const insertToEmail = async () => {
     try {
-      await insertToComposeBody(output);
+      if (subject !== "") {
+        await insertToComposeSubject(subject);
+      }
+      await insertToComposeBody(body);
     } catch (error) {
       console.log("Error: " + error);
       notify("error", "An error occurred while inserting the email.");
+    }
+  };
+
+  const copyToClipboard = async () => {
+    try {
+      await navigator.clipboard.writeText(body);
+      notify("success", "Output copied to clipboard.");
+    } catch (error) {
+      console.log("Error: " + error);
+      notify("error", "An error occurred while copying to the clipboard.");
     }
   };
 
@@ -160,20 +208,28 @@ const ComposePage: React.FC = () => {
         </Button>
       </div>
       {isLoading && <Spinner className={styles.spinner} />}
-      {output && (
-        <Field className={styles.textAreaField} size="large" label="AI Generated Email">
-          <Textarea resize="vertical" value={output} onChange={handleOutputTextChange} rows={7} />
+      {subject && (
+        <Field className={styles.textAreaField} size="large" label="Subject">
+          <Input value={subject} onChange={handleSubjectTextChange} />
         </Field>
       )}
-      {output && (
+      {body && (
+        <Field className={styles.textAreaField} size="large" label="Email Body">
+          <Textarea resize="vertical" value={body} onChange={handleBodyTextChange} rows={7} />
+        </Field>
+      )}
+      {body && (
         <div className={styles.buttonContainer}>
           <Button
             appearance="primary"
             className={styles.button}
-            disabled={isLoading || isReadMode()}
+            disabled={isLoading || getCurrentMode() === EmailMode.MessageRead}
             onClick={insertToEmail}
           >
             Insert to Email
+          </Button>
+          <Button appearance="primary" className={styles.button} disabled={isLoading} onClick={copyToClipboard}>
+            Copy to Clipboard
           </Button>
         </div>
       )}

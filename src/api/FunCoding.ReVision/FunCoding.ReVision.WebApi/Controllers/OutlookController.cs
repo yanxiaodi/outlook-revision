@@ -31,7 +31,7 @@ public class OutlookController(IReVisionService revisionService) : ControllerBas
             return BadRequest("Target language is required");
         }
 
-        if (string.IsNullOrWhiteSpace(request.Input) && string.IsNullOrWhiteSpace(request.CurrentEmail))
+        if (string.IsNullOrWhiteSpace(request.Input) && string.IsNullOrWhiteSpace(request.CurrentEmailBody))
         {
             return BadRequest("Input or current email is required");
         }

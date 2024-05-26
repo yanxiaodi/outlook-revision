@@ -63,34 +63,32 @@ const useStyles = makeStyles({
 });
 
 const defaultGlobalState: GlobalState = {
-    translatePageState: {
-        input: "",
-        output: "",
-        summary: "",
-    },
-    composePageState: {
-        currentEmail: "",
-        input: "",
-        output: "",
-    },
-    setGlobalState: () => {},
+  translatePageState: {
+    input: "",
+    output: "",
+    summary: "",
+  },
+  composePageState: {
+    currentEmailSubject: "",
+    currentEmailBody: "",
+    input: "",
+    subject: "",
+    body: "",
+  },
+  setGlobalState: () => {},
 };
 
 export const GlobalStateContext = React.createContext(defaultGlobalState);
 
 export interface GlobalState {
-    translatePageState: TranslatePageState;
-    composePageState: ComposePageState;
-    setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
+  translatePageState: TranslatePageState;
+  composePageState: ComposePageState;
+  setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
 }
 
 export const GlobalStateProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-    const [state, setGlobalState] = React.useState(defaultGlobalState);
-    return (
-        <GlobalStateContext.Provider value={{ ...state, setGlobalState }}>
-            {children}
-        </GlobalStateContext.Provider>
-    );
+  const [state, setGlobalState] = React.useState(defaultGlobalState);
+  return <GlobalStateContext.Provider value={{ ...state, setGlobalState }}>{children}</GlobalStateContext.Provider>;
 };
 
 const TabContainer: React.FC = () => {

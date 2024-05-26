@@ -1,6 +1,8 @@
 export class ComposeResponse {
-  text: string;
-  constructor(text: string) {
-    this.text = text;
+  subject: string;
+  body: string;
+  constructor(subject: string, body: string) {
+    this.subject = subject;
+    this.body = body;
   }
 }

@@ -1,6 +1,7 @@
 ﻿namespace FunCoding.ReVision.WebApi.Models;
 
-public class ComposeResponse(string text)
+public class ComposeResponse(string subject, string body)
 {
-    public string Text { get; set; } = text;
+    public string Subject { get; set; } = subject;
+    public string Body { get; set; } = body;
 }
