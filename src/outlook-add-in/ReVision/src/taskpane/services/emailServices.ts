@@ -80,3 +80,24 @@ export const insertToComposeBody = (text: string) => {
     });
   });
 };
+
+export const getSelectedText = () => {
+  return new Promise((resolve, reject) => {
+    Office.context.mailbox.item?.getSelectedDataAsync(Office.CoercionType.Text, async (result) => {
+      if (result.status === Office.AsyncResultStatus.Failed) {
+        reject("Error: " + result.error.message);
+      } else {
+        if (result.value.data !== "") {
+          resolve(result.value.data);
+        } else {
+          if (result.value.sourceProperty === "subject") {
+            const subject = await getEmailSubject();
+            resolve(subject);
+          } else if (result.value.sourceProperty === "body") {
+            reject("No text selected.");
+          }
+        }
+      }
+    });
+  });
+};

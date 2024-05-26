@@ -13,6 +13,7 @@ import type { SelectTabData, SelectTabEvent, TabValue } from "@fluentui/react-co
 import TranslatePage, { TranslatePageState } from "./TranslatePage";
 import ComposePage, { ComposePageState } from "./ComposePage";
 import { EmailMode, getCurrentMode } from "../services/emailServices";
+import RevisePage, { RevisePageState } from "./Revise";
 
 const TranslateIcon = bundleIcon(TranslateAuto20Regular, TranslateAuto20Filled);
 const ComposeIcon = bundleIcon(Compose20Regular, Compose20Filled);
@@ -76,6 +77,12 @@ const defaultGlobalState: GlobalState = {
     subject: "",
     body: "",
   },
+  revisePageState: {
+    draft: "",
+    reviseSuggestions: {
+      suggestionCategories: [],
+    },
+  },
   setGlobalState: () => {},
 };
 
@@ -84,6 +91,7 @@ export const GlobalStateContext = React.createContext(defaultGlobalState);
 export interface GlobalState {
   translatePageState: TranslatePageState;
   composePageState: ComposePageState;
+  revisePageState: RevisePageState;
   setGlobalState: React.Dispatch<React.SetStateAction<GlobalState>>;
 }
 
@@ -122,8 +130,7 @@ const TabContainer: React.FC = () => {
   const ReviseTab = React.memo(() => {
     return (
       <section>
-        <h2>Revise</h2>
-        <p>Revise the email content for writing tone.</p>
+        <RevisePage />
       </section>
     );
   });
