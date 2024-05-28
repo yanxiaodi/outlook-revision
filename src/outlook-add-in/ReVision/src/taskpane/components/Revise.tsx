@@ -1,4 +1,4 @@
-import React, { useState, useContext } from "react";
+import React, { useState, useContext, useEffect } from "react";
 import {
   makeStyles,
   Textarea,
@@ -17,6 +17,10 @@ import {
   TabValue,
   SelectTabEvent,
   SelectTabData,
+  Accordion,
+  AccordionItem,
+  AccordionHeader,
+  AccordionPanel,
 } from "@fluentui/react-components";
 import { SettingsContext } from "./App";
 import { GlobalStateContext } from "./TabsContainer";
@@ -66,16 +70,26 @@ const RevisePage: React.FC = () => {
   const { dispatchToast } = useToastController(toasterId);
   const { settings, setSettings } = React.useContext(SettingsContext);
   const { revisePageState, setGlobalState } = React.useContext(GlobalStateContext);
-  const [draft, setDraft] = useState("");
-  const [reviseSuggestions, setReviseSuggestions] = useState<SuggestionCategory[]>([]);
+  const [draft, setDraft] = useState(revisePageState.draft);
+  const [reviseSuggestions, setReviseSuggestions] = useState(revisePageState.reviseSuggestions);
   const [isLoading, setIsLoading] = useState(false);
   const [selectedValue, setSelectedValue] = React.useState<TabValue>(0);
   const styles = useStyles();
 
+  useEffect(() => {
+    setGlobalState((prevState) => ({
+      ...prevState,
+      revisePageState: {
+        draft,
+        reviseSuggestions,
+      },
+    }));
+  }, [draft, reviseSuggestions]);
+
   const getSuggestion = async () => {
     try {
       setIsLoading(true);
-      setReviseSuggestions([]);
+      setReviseSuggestions(new ReviseResponse([]));
 
       let draftText = draft;
       if (!draftText || draftText.trim() === "") {
@@ -85,16 +99,17 @@ const RevisePage: React.FC = () => {
       }
 
       let targetLanguage = settings.emailLanguage;
+      let userLanguage = settings.userLanguage;
       let writingTone = settings.writingTone;
 
-      const reviseRequest = new ReviseRequest(draftText, targetLanguage, writingTone);
+      const reviseRequest = new ReviseRequest(draftText, targetLanguage, userLanguage, writingTone);
       const response = await fetch("http://localhost:5018/api/Outlook/revise", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reviseRequest),
       });
       const data: ReviseResponse = await response.json();
-      setReviseSuggestions(data.suggestionCategories);
+      setReviseSuggestions(data);
       notify("success", "Suggestion generated successfully.");
     } catch (error) {
       notify("error", "An error occurred while revising the email.");
@@ -132,14 +147,15 @@ const RevisePage: React.FC = () => {
   };
 
   const handleCheckboxChange = (categoryIndex: number, suggestionIndex: number) => {
-    const newReviseSuggestions = [...reviseSuggestions];
-    newReviseSuggestions[categoryIndex].suggestions[suggestionIndex].selected =
-      !newReviseSuggestions[categoryIndex].suggestions[suggestionIndex].selected;
-    setReviseSuggestions(newReviseSuggestions);
-  };
+    // Create a new copy of the reviseSuggestions state
+    const newReviseSuggestions: ReviseResponse = JSON.parse(JSON.stringify(reviseSuggestions));
 
-  const onTabSelect = (_event: SelectTabEvent, data: SelectTabData) => {
-    setSelectedValue(data.value);
+    // Modify the selected property of the suggestion
+    newReviseSuggestions.suggestionCategories[categoryIndex].suggestions[suggestionIndex].selected =
+      !newReviseSuggestions.suggestionCategories[categoryIndex].suggestions[suggestionIndex].selected;
+
+    // Set the state with the new copy
+    setReviseSuggestions(newReviseSuggestions);
   };
 
   return (
@@ -161,53 +177,47 @@ const RevisePage: React.FC = () => {
       {isLoading && <Spinner className={styles.spinner} />}
 
       <div className={styles.container}>
-        <TabList selectedValue={selectedValue} onTabSelect={onTabSelect}>
-          {reviseSuggestions.map((category, index) => (
-            <Tab key={index} value={index}>
-              {category.category}
-            </Tab>
-          ))}
-        </TabList>
-        {reviseSuggestions.map(
-          (category, index) =>
-            selectedValue === index && (
-              <div key={index}>
-                {category.suggestions.map((suggestion, sIndex) => (
-                  <div key={sIndex}>
-                    <Checkbox checked={suggestion.selected} onChange={() => handleCheckboxChange(index, sIndex)} />
-                    <strong>{suggestion.title}</strong>
-                    <ReactMarkdown>{suggestion.explanation}</ReactMarkdown>
-                  </div>
-                ))}
-              </div>
-            )
-        )}
+        <Accordion multiple>
+          {reviseSuggestions.suggestionCategories &&
+            reviseSuggestions.suggestionCategories.map(
+              (category, index) =>
+                category && (
+                  <AccordionItem key={`category-${index}`} value={index}>
+                    <AccordionHeader>
+                      {category.category}
+                      {category.categoryInUserLanguage && ` (${category.categoryInUserLanguage})`}
+                    </AccordionHeader>
+                    <AccordionPanel>
+                      <div key={`panel-${index}`}>
+                        {category.suggestions &&
+                          category.suggestions.map(
+                            (suggestion, sIndex) =>
+                              suggestion && (
+                                <div key={`suggestion-${index}-${sIndex}`}>
+                                  {suggestion.needsAttention && (
+                                    <Checkbox
+                                      checked={suggestion.selected}
+                                      onChange={() => handleCheckboxChange(index, sIndex)}
+                                    />
+                                  )}
+                                  <strong>
+                                    {suggestion.title}
+                                    {suggestion.titleInUserLanguage && ` (${suggestion.titleInUserLanguage})`}
+                                  </strong>
+                                  <ReactMarkdown>{suggestion.explanation}</ReactMarkdown>
+                                  {suggestion.explanationInUserLanguage && (
+                                    <ReactMarkdown>{suggestion.explanationInUserLanguage}</ReactMarkdown>
+                                  )}
+                                </div>
+                              )
+                          )}
+                      </div>
+                    </AccordionPanel>
+                  </AccordionItem>
+                )
+            )}
+        </Accordion>
       </div>
-      {/* {reviseSuggestions && (
-        <Field className={styles.textAreaField} size="large" label="Revised Email">
-          <Textarea
-            resize="vertical"
-            value={reviseSuggestions}
-            onChange={(e) => setReviseSuggestions(e.target.value)}
-            rows={7}
-          />
-        </Field>
-      )} */}
-      {/* {reviseSuggestions && (
-        <div className={styles.buttonContainer}>
-          <Button
-            appearance="primary"
-            className={styles.button}
-            disabled={isLoading || getCurrentMode() === EmailMode.MessageRead}
-            onClick={insertToEmail}
-          >
-            Insert to Email
-          </Button>
-          <Button appearance="primary" className={styles.button} disabled={isLoading} onClick={copyToClipboard}>
-            Copy to Clipboard
-          </Button>
-        </div>
-      )} */}
       <Toaster toasterId={toasterId} />
     </div>
   );
