@@ -116,7 +116,7 @@ public class ReVisionService(Kernel kernel) : IReVisionService
 
     }
 
-    public async Task<ReviseResponse> ReviseAsync(ReviseRequest request)
+    public async Task<SuggestResponse> SuggestAsync(SuggestRequest request)
     {
         var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
 
@@ -242,8 +242,8 @@ public class ReVisionService(Kernel kernel) : IReVisionService
             promptExecutionSettings,
             kernel);
         var responseText = composeResponse.FirstOrDefault()?.Content ?? "";
-        if (string.IsNullOrWhiteSpace(responseText)) return new ReviseResponse();
-        var response = JsonSerializer.Deserialize<ReviseResponse>(responseText, new JsonSerializerOptions
+        if (string.IsNullOrWhiteSpace(responseText)) return new SuggestResponse();
+        var response = JsonSerializer.Deserialize<SuggestResponse>(responseText, new JsonSerializerOptions
         {
             PropertyNameCaseInsensitive = true,
         });
@@ -251,6 +251,43 @@ public class ReVisionService(Kernel kernel) : IReVisionService
         {
             return response;
         }
-        return new ReviseResponse();
+        return new SuggestResponse();
+    }
+
+    public async Task<ReviseResponse> ReviseAsync(ReviseRequest request)
+    {
+        var chatCompletionService = kernel.GetRequiredService<IChatCompletionService>();
+
+        var chatMessages = new ChatHistory($$"""
+                                             You are a friendly email assistant that helps the user manage emails.
+                                             Revise an email in {{request.TargetLanguage}}.
+                                             The tone of the email should be **{{request.WritingTone}}**.
+
+                                             The email should be concise and to the point.
+                                             You need to follow the suggestions to improve the email.
+                                             
+                                             Return the revised email in plain text.
+                                             """);
+        chatMessages.AddUserMessage($"""
+                                     The user's email is:
+                                     {request.Draft}
+                                     """);
+        chatMessages.AddUserMessage($"""
+                                      The suggestions are:
+                                      {string.Join("\n", request.Suggestions.Select(x => x.Explanation))}
+                                      """);
+        var promptExecutionSettings = new OpenAIPromptExecutionSettings
+        {
+            ToolCallBehavior = ToolCallBehavior.EnableFunctions(new List<OpenAIFunction>(), false)
+        };
+        var composeResponse = await chatCompletionService.GetChatMessageContentsAsync(
+            chatMessages,
+            promptExecutionSettings,
+            kernel);
+        var responseText = composeResponse.FirstOrDefault()?.Content ?? "";
+        return new ReviseResponse()
+        {
+            Text = responseText
+        };
     }
 }
