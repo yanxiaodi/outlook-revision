@@ -1,4 +1,4 @@
-export class ReviseResponse {
+export class SuggestResponse {
   suggestionCategories: SuggestionCategory[];
   constructor(suggestionCategories: SuggestionCategory[]) {
     this.suggestionCategories = suggestionCategories;

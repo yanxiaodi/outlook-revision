@@ -27,13 +27,13 @@ import {
   getSelectedText,
   insertToComposeBody,
 } from "../services/emailServices";
-import { ReviseResponse } from "../models/reviseResponse";
-import { ReviseRequest } from "../models/reviseRequest";
+import { SuggestResponse } from "../models/suggestResponse";
+import { SuggestRequest } from "../models/suggestRequest";
 import ReactMarkdown from "react-markdown";
 
 export interface RevisePageState {
   draft: string;
-  reviseSuggestions: ReviseResponse;
+  reviseSuggestions: SuggestResponse;
 }
 
 const useStyles = makeStyles({
@@ -91,7 +91,7 @@ const RevisePage: React.FC = () => {
   const getSuggestion = async () => {
     try {
       setIsLoading(true);
-      setReviseSuggestions(new ReviseResponse([]));
+      setReviseSuggestions(new SuggestResponse([]));
 
       let draftText = draft;
       if (!draftText || draftText.trim() === "") {
@@ -118,13 +118,13 @@ const RevisePage: React.FC = () => {
       let userLanguage = settings.userLanguage;
       let writingTone = settings.writingTone;
 
-      const reviseRequest = new ReviseRequest(draftText, targetLanguage, userLanguage, writingTone);
-      const response = await fetch("http://localhost:5018/api/Outlook/revise", {
+      const reviseRequest = new SuggestRequest(draftText, targetLanguage, userLanguage, writingTone);
+      const response = await fetch("http://localhost:5018/api/Outlook/suggest", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(reviseRequest),
       });
-      const data: ReviseResponse = await response.json();
+      const data: SuggestResponse = await response.json();
       setReviseSuggestions(data);
       notify("success", "Suggestion generated successfully.");
     } catch (error) {
@@ -164,7 +164,7 @@ const RevisePage: React.FC = () => {
 
   const handleCheckboxChange = (categoryIndex: number, suggestionIndex: number) => {
     // Create a new copy of the reviseSuggestions state
-    const newReviseSuggestions: ReviseResponse = JSON.parse(JSON.stringify(reviseSuggestions));
+    const newReviseSuggestions: SuggestResponse = JSON.parse(JSON.stringify(reviseSuggestions));
 
     // Modify the selected property of the suggestion
     newReviseSuggestions.suggestionCategories[categoryIndex].suggestions[suggestionIndex].selected =

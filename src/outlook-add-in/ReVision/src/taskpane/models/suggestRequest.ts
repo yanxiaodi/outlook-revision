@@ -1,4 +1,4 @@
-export class ReviseRequest {
+export class SuggestRequest {
   draft: string;
   targetLanguage: string;
   userLanguage: string;
