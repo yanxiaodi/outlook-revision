@@ -11,12 +11,8 @@ import {
   ToastTitle,
   ToastIntent,
   Spinner,
-  TabList,
-  Tab,
   Checkbox,
   TabValue,
-  SelectTabEvent,
-  SelectTabData,
   Accordion,
   AccordionItem,
   AccordionHeader,
@@ -24,8 +20,14 @@ import {
 } from "@fluentui/react-components";
 import { SettingsContext } from "./App";
 import { GlobalStateContext } from "./TabsContainer";
-import { EmailMode, getCurrentMode, getSelectedText, insertToComposeBody } from "../services/emailServices";
-import { ReviseResponse, SuggestionCategory } from "../models/reviseResponse";
+import {
+  EmailMode,
+  getCurrentMode,
+  getReplyText,
+  getSelectedText,
+  insertToComposeBody,
+} from "../services/emailServices";
+import { ReviseResponse } from "../models/reviseResponse";
 import { ReviseRequest } from "../models/reviseRequest";
 import ReactMarkdown from "react-markdown";
 
@@ -94,8 +96,22 @@ const RevisePage: React.FC = () => {
       let draftText = draft;
       if (!draftText || draftText.trim() === "") {
         const selectedText = (await getSelectedText()) as string;
-        setDraft(selectedText);
-        draftText = selectedText;
+        if (selectedText.trim() !== "") {
+          draftText = selectedText;
+        } else {
+          const replyText = (await getReplyText()) as string;
+          if (replyText.trim() !== "") {
+            draftText = replyText;
+          }
+        }
+      }
+
+      if (!draftText || draftText.trim() === "") {
+        notify("info", "Please enter the draft content or select text from the email.");
+        setIsLoading(false);
+        return;
+      } else {
+        setDraft(draftText);
       }
 
       let targetLanguage = settings.emailLanguage;
