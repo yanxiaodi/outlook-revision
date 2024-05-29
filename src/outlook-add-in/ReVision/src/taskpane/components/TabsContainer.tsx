@@ -82,6 +82,7 @@ const defaultGlobalState: GlobalState = {
     reviseSuggestions: {
       suggestionCategories: [],
     },
+    revisedText: "",
   },
   setGlobalState: () => {},
 };
@@ -149,9 +150,11 @@ const TabContainer: React.FC = () => {
                 Compose
               </Tab>
             )}
-            <Tab id="Revise" value="tab-revise" icon={<ReviseIcon />}>
-              Revise
-            </Tab>
+            {isComposeMode && (
+              <Tab id="Revise" value="tab-revise" icon={<ReviseIcon />}>
+                Revise
+              </Tab>
+            )}
           </TabList>
         </div>
         <div className={styles.panels}>

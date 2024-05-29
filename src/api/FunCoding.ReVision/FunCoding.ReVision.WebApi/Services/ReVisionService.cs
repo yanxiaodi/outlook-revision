@@ -262,20 +262,22 @@ public class ReVisionService(Kernel kernel) : IReVisionService
                                              You are a friendly email assistant that helps the user manage emails.
                                              Revise an email in {{request.TargetLanguage}}.
                                              The tone of the email should be **{{request.WritingTone}}**.
-
                                              The email should be concise and to the point.
-                                             You need to follow the suggestions to improve the email.
-                                             
-                                             Return the revised email in plain text.
+                                             Return the revised email body only.
                                              """);
         chatMessages.AddUserMessage($"""
-                                     The user's email is:
+                                     The user's email draft is:
                                      {request.Draft}
                                      """);
-        chatMessages.AddUserMessage($"""
-                                      The suggestions are:
-                                      {string.Join("\n", request.Suggestions.Select(x => x.Explanation))}
-                                      """);
+        if (request.Suggestions.Any())
+        {
+            chatMessages.AddUserMessage($"""
+                                         You need to follow the suggestions to improve the email.
+                                         The suggestions are:
+                                         {string.Join("\n* ", request.Suggestions.Select(x => x.Explanation))}
+                                         """);
+        }
+
         var promptExecutionSettings = new OpenAIPromptExecutionSettings
         {
             ToolCallBehavior = ToolCallBehavior.EnableFunctions(new List<OpenAIFunction>(), false)

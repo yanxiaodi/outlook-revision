@@ -30,10 +30,13 @@ import {
 import { SuggestResponse } from "../models/suggestResponse";
 import { SuggestRequest } from "../models/suggestRequest";
 import ReactMarkdown from "react-markdown";
+import { ReviseRequest } from "../models/reviseRequest";
+import { ReviseResponse } from "../models/reviseResponse";
 
 export interface RevisePageState {
   draft: string;
   reviseSuggestions: SuggestResponse;
+  revisedText: string;
 }
 
 const useStyles = makeStyles({
@@ -74,8 +77,9 @@ const RevisePage: React.FC = () => {
   const { revisePageState, setGlobalState } = React.useContext(GlobalStateContext);
   const [draft, setDraft] = useState(revisePageState.draft);
   const [reviseSuggestions, setReviseSuggestions] = useState(revisePageState.reviseSuggestions);
+  const [revisedText, setRevisedText] = useState(revisePageState.revisedText);
   const [isLoading, setIsLoading] = useState(false);
-  const [selectedValue, setSelectedValue] = React.useState<TabValue>(0);
+
   const styles = useStyles();
 
   useEffect(() => {
@@ -84,9 +88,10 @@ const RevisePage: React.FC = () => {
       revisePageState: {
         draft,
         reviseSuggestions,
+        revisedText,
       },
     }));
-  }, [draft, reviseSuggestions]);
+  }, [draft, reviseSuggestions, revisedText]);
 
   const getSuggestion = async () => {
     try {
@@ -134,9 +139,43 @@ const RevisePage: React.FC = () => {
     }
   };
 
+  const getRevisedText = async () => {
+    try {
+      setIsLoading(true);
+
+      let targetLanguage = settings.emailLanguage;
+      let writingTone = settings.writingTone;
+
+      // Create a new copy of the reviseSuggestions state
+      const newReviseSuggestions: SuggestResponse = JSON.parse(JSON.stringify(reviseSuggestions));
+
+      // Get the selected suggestions
+      const selectedSuggestions = newReviseSuggestions.suggestionCategories.flatMap((category) =>
+        category.suggestions.filter((suggestion) => suggestion.selected)
+      );
+
+      const reviseRequest = new ReviseRequest(draft, targetLanguage, writingTone, selectedSuggestions);
+
+      const response = await fetch("http://localhost:5018/api/Outlook/revise", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(reviseRequest),
+      });
+
+      const data: ReviseResponse = await response.json();
+
+      setRevisedText(data.text);
+      notify("success", "Email revised successfully.");
+    } catch (error) {
+      notify("error", "An error occurred while revising the email.");
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   const insertToEmail = async () => {
     try {
-      //await insertToComposeBody(revised);
+      await insertToComposeBody(revisedText);
     } catch (error) {
       console.log("Error: " + error);
       notify("error", "An error occurred while inserting the email.");
@@ -145,7 +184,7 @@ const RevisePage: React.FC = () => {
 
   const copyToClipboard = async () => {
     try {
-      //await navigator.clipboard.writeText(revised);
+      await navigator.clipboard.writeText(revisedText);
       notify("success", "Output copied to clipboard.");
     } catch (error) {
       console.log("Error: " + error);
@@ -174,6 +213,10 @@ const RevisePage: React.FC = () => {
     setReviseSuggestions(newReviseSuggestions);
   };
 
+  const handleBodyTextChange = async (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setRevisedText(event.target.value);
+  };
+
   return (
     <div className={styles.container}>
       <Field className={styles.textAreaField} size="large" label="Enter draft content for the email.">
@@ -188,6 +231,9 @@ const RevisePage: React.FC = () => {
       <div className={styles.buttonContainer}>
         <Button appearance="primary" className={styles.button} onClick={getSuggestion} disabled={isLoading}>
           AI suggestion
+        </Button>
+        <Button appearance="primary" className={styles.button} onClick={getRevisedText} disabled={isLoading}>
+          Revise
         </Button>
       </div>
       {isLoading && <Spinner className={styles.spinner} />}
@@ -234,6 +280,26 @@ const RevisePage: React.FC = () => {
             )}
         </Accordion>
       </div>
+      {revisedText && (
+        <Field className={styles.textAreaField} size="large" label="Revised Email">
+          <Textarea resize="vertical" value={revisedText} onChange={handleBodyTextChange} rows={7} />
+        </Field>
+      )}
+      {revisedText && (
+        <div className={styles.buttonContainer}>
+          <Button
+            appearance="primary"
+            className={styles.button}
+            disabled={isLoading || getCurrentMode() === EmailMode.MessageRead}
+            onClick={insertToEmail}
+          >
+            Insert to Email
+          </Button>
+          <Button appearance="primary" className={styles.button} disabled={isLoading} onClick={copyToClipboard}>
+            Copy to Clipboard
+          </Button>
+        </div>
+      )}
       <Toaster toasterId={toasterId} />
     </div>
   );
