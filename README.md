@@ -11,3 +11,7 @@ This project is an Outlook add-in that allows users to revise/translate their em
 * Users can summarize the email
 * Users can reply to the email in another language, and the add-in will translate the reply back to the original language
 * Users can adjust the tone of the email (e.g. formal, informal, friendly, etc.)
+
+## Demo Video
+
+[![Watch the video](https://i.ytimg.com/vi/4vLzl5jOKsk/hqdefault.jpg?sqp=-oaymwE2CNACELwBSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARgnICQofzAP&rs=AOn4CLBenUzB_cnoREFWZ4xh43fZUwVsKw)](https://youtu.be/4vLzl5jOKsk)
