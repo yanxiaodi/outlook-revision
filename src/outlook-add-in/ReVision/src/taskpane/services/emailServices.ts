@@ -7,7 +7,7 @@ export enum EmailMode {
 }
 
 export const getCurrentMode = (): EmailMode => {
-  const item = Office.context.mailbox.item;
+  const item = Office.context.mailbox?.item;
   if (!item) {
     return EmailMode.Unknown;
   }

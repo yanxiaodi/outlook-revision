@@ -51,7 +51,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
   const handleEmailLanguageDropdownChange = (_event: SelectionEvents, option?: OptionOnSelectData) => {
     if (option) {
       setSettings((prevSettings) => {
-        const newSettings = { ...prevSettings, emailLanguage: option.optionValue };
+        const newSettings = { ...prevSettings, emailLanguage: option.optionValue! };
         localStorage.setItem("settings", JSON.stringify(newSettings));
         return newSettings;
       });
@@ -61,7 +61,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
   const handleUserLanguageDropdownChange = (_event: SelectionEvents, option?: OptionOnSelectData) => {
     if (option) {
       setSettings((prevSettings) => {
-        const newSettings = { ...prevSettings, userLanguage: option.optionValue };
+        const newSettings = { ...prevSettings, userLanguage: option.optionValue! };
         localStorage.setItem("settings", JSON.stringify(newSettings));
         return newSettings;
       });
@@ -71,7 +71,7 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
   const handleWritingToneDropdownChange = (_event: SelectionEvents, option?: OptionOnSelectData) => {
     if (option) {
       setSettings((prevSettings) => {
-        const newSettings = { ...prevSettings, writingTone: option.optionValue };
+        const newSettings = { ...prevSettings, writingTone: option.optionValue! };
         console.log(newSettings);
 
         localStorage.setItem("settings", JSON.stringify(newSettings));
