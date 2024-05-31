@@ -15,7 +15,7 @@ import {
 import { getEmailText, getEmailId } from "../services/emailServices";
 import { TranslateRequest } from "../models/translateRequest";
 import { TranslateResponse } from "../models/translateResponse";
-import { SettingsContext } from "./App";
+import { SettingsContext, languageList } from "./App";
 import { GlobalStateContext } from "./TabsContainer";
 
 export interface TranslatePageState {
@@ -87,7 +87,7 @@ const TranslatePage: React.FC = () => {
         setInput(emailBody);
         inputText = emailBody;
       }
-      const translateRequest = new TranslateRequest(settings.userLanguage, inputText);
+      const translateRequest = new TranslateRequest(languageList.find(x => x.languageCode == settings.userLanguage)?.displayName!, inputText);
       const response = await fetch("http://localhost:5018/api/Outlook/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

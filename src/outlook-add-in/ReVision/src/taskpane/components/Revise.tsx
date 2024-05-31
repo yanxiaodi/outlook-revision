@@ -97,6 +97,7 @@ const RevisePage: React.FC = () => {
     try {
       setIsLoading(true);
       setReviseSuggestions(new SuggestResponse([]));
+      setRevisedText("");
 
       let draftText = draft;
       if (!draftText || draftText.trim() === "") {

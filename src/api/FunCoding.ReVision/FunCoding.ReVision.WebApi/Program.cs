@@ -22,11 +22,10 @@ if (openAiOptions is null)
 var kernelBuilder = Kernel.CreateBuilder();
 kernelBuilder.Services.AddAzureOpenAIChatCompletion(openAiOptions.Model, openAiOptions.Endpoint, openAiOptions.ApiKey);
 
-var kenel = kernelBuilder.Build();
-var pluginDirectoryPath = Path.Combine(System.IO.Directory.GetCurrentDirectory(), "Plugins");
-kenel.ImportPluginFromPromptDirectory(Path.Combine(pluginDirectoryPath, "SummarizePlugin"));
-kenel.ImportPluginFromPromptDirectory(Path.Combine(pluginDirectoryPath, "WriterPlugin"));
-builder.Services.AddSingleton(kenel);
+var kernel = kernelBuilder.Build();
+//var pluginDirectoryPath = Path.Combine(Directory.GetCurrentDirectory(), "Plugins");
+//kernel.ImportPluginFromPromptDirectory(Path.Combine(pluginDirectoryPath, "ReVisionPlugin"));
+builder.Services.AddSingleton(kernel);
 
 // Enable CORS
 builder.Services.AddCors(options =>

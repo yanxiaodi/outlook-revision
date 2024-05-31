@@ -8,6 +8,50 @@ interface AppProps {
   title: string;
 }
 
+// Create a language list
+export const languageList: Language[] = [
+  {
+    languageCode: "en",
+    displayName: "English",
+  },
+  {
+    languageCode: "es",
+    displayName: "Spanish",
+  },
+  {
+    languageCode: "fr",
+    displayName: "French",
+  },
+  {
+    languageCode: "de",
+    displayName: "German",
+  },
+  {
+    languageCode: "it",
+    displayName: "Italian",
+  },
+  {
+    languageCode: "ja",
+    displayName: "Japanese",
+  },
+  {
+    languageCode: "ko",
+    displayName: "Korean",
+  },
+  {
+    languageCode: "pt",
+    displayName: "Portuguese",
+  },
+  {
+    languageCode: "ru",
+    displayName: "Russian",
+  },
+  {
+    languageCode: "zh",
+    displayName: "Chinese",
+  },
+];
+
 const useStyles = makeStyles({
   root: {
     minHeight: "100vh",
@@ -29,52 +73,8 @@ export const SettingsContext = React.createContext<{
 const App: React.FC<AppProps> = (_props: AppProps) => {
   const styles = useStyles();
 
-  // Create a language list
-  const languageList: Language[] = [
-    {
-      languageCode: "en",
-      displayName: "English",
-    },
-    {
-      languageCode: "es",
-      displayName: "Spanish",
-    },
-    {
-      languageCode: "fr",
-      displayName: "French",
-    },
-    {
-      languageCode: "de",
-      displayName: "German",
-    },
-    {
-      languageCode: "it",
-      displayName: "Italian",
-    },
-    {
-      languageCode: "ja",
-      displayName: "Japanese",
-    },
-    {
-      languageCode: "ko",
-      displayName: "Korean",
-    },
-    {
-      languageCode: "pt",
-      displayName: "Portuguese",
-    },
-    {
-      languageCode: "ru",
-      displayName: "Russian",
-    },
-    {
-      languageCode: "zh",
-      displayName: "Chinese",
-    },
-  ];
-
   // Create a tone list
-  const toneList: string[] = ["Casual", "Professional"];
+  const toneList: string[] = ["Colloquial", "Casual", "Professional", "Formal", "Academic"];
   const [settings, setSettings] = React.useState<SettingsState>(() => {
     const savedSettings = localStorage.getItem("settings");
     return savedSettings
