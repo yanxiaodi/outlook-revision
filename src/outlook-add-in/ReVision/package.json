@@ -32,6 +32,7 @@
     "@fluentui/react-icons": "^2.0.232",
     "core-js": "^3.36.0",
     "es6-promise": "^4.2.8",
+    "office-addin-taskpane-react": "file:",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-markdown": "^9.0.1",

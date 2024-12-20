@@ -87,7 +87,10 @@ const TranslatePage: React.FC = () => {
         setInput(emailBody);
         inputText = emailBody;
       }
-      const translateRequest = new TranslateRequest(languageList.find(x => x.languageCode == settings.userLanguage)?.displayName!, inputText);
+      const translateRequest = new TranslateRequest(
+        languageList.find((x) => x.languageCode == settings.userLanguage)?.displayName!,
+        inputText
+      );
       const response = await fetch("http://localhost:5018/api/Outlook/translate", {
         method: "POST",
         headers: { "Content-Type": "application/json" },

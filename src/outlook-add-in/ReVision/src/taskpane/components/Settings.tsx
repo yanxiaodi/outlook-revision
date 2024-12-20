@@ -109,7 +109,9 @@ const Settings: React.FC<SettingsProps> = (props: SettingsProps) => {
         name="userLanguage"
         {...props}
         onOptionSelect={handleUserLanguageDropdownChange}
-        defaultValue={languages.find((x) => x.languageCode == settings.userLanguage)?.displayName ?? languages[0].displayName}
+        defaultValue={
+          languages.find((x) => x.languageCode == settings.userLanguage)?.displayName ?? languages[0].displayName
+        }
       >
         {languages.map((option) => (
           <Option key={option.languageCode} value={option.languageCode}>

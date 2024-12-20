@@ -119,6 +119,7 @@ const TabContainer: React.FC = () => {
       </section>
     );
   });
+  TranslateTab.displayName = "TranslateTab";
 
   const ComposeTab = React.memo(() => {
     return (
@@ -127,6 +128,7 @@ const TabContainer: React.FC = () => {
       </section>
     );
   });
+  ComposeTab.displayName = "ComposeTab";
 
   const ReviseTab = React.memo(() => {
     return (
@@ -135,6 +137,7 @@ const TabContainer: React.FC = () => {
       </section>
     );
   });
+  ReviseTab.displayName = "ReviseTab";
 
   return (
     <GlobalStateProvider>
