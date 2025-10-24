@@ -1,0 +1,67 @@
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Launch Backend API",
+      "type": "coreclr",
+      "request": "launch",
+      "preLaunchTask": "Build Backend",
+      "program": "${workspaceFolder}/src/api/FunCoding.ReVision/FunCoding.ReVision.WebApi/bin/Debug/net8.0/FunCoding.ReVision.WebApi.dll",
+      "args": [],
+      "cwd": "${workspaceFolder}/src/api/FunCoding.ReVision/FunCoding.ReVision.WebApi",
+      "stopAtEntry": false,
+      "serverReadyAction": {
+        "action": "openExternally",
+        "pattern": "\\bNow listening on:\\s+(https?://\\S+)"
+      },
+      "env": {
+        "ASPNETCORE_ENVIRONMENT": "Development"
+      },
+      "sourceFileMap": {
+        "/Views": "${workspaceFolder}/Views"
+      }
+    },
+    {
+      "name": "Debug Outlook Add-in (Edge Chromium)",
+      "type": "msedge",
+      "request": "attach",
+      "port": 9229,
+      "timeout": 600000,
+      "webRoot": "${workspaceFolder}/src/outlook-add-in/ReVision",
+      "preLaunchTask": "Start Frontend Dev Server",
+      "postDebugTask": "Stop Outlook Add-in",
+      "url": "https://localhost:3001/taskpane.html"
+    },
+    {
+      "name": "Debug Outlook Add-in (Chrome)",
+      "type": "chrome",
+      "request": "attach",
+      "url": "https://localhost:3001/taskpane.html?_host_Info=Outlook$Win32$16.01$en-US$$$$0",
+      "port": 9222,
+      "timeout": 600000,
+      "webRoot": "${workspaceFolder}/src/outlook-add-in/ReVision",
+      "preLaunchTask": "Start Frontend Dev Server",
+      "postDebugTask": "Stop Outlook Add-in"
+    },
+    {
+      "name": "Launch Full Application",
+      "type": "node",
+      "request": "launch",
+      "preLaunchTask": "Start Both Services",
+      "program": "${workspaceFolder}/dummy.js",
+      "console": "integratedTerminal",
+      "skipFiles": ["<node_internals>/**"]
+    }
+  ],
+  "compounds": [
+    {
+      "name": "Debug Full Stack",
+      "configurations": [
+        "Launch Backend API",
+        "Debug Outlook Add-in (Chrome)"
+      ],
+      "preLaunchTask": "Start Both Services",
+      "stopAll": true
+    }
+  ]
+}

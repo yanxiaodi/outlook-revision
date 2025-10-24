@@ -1,0 +1,476 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Outlook ReVision - AI-Powered Email Assistant</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content="Transform your email writing with AI-powered composition, revision, and translation in Outlook">
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+      
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+        line-height: 1.6;
+        color: #333;
+        background: linear-gradient(135deg, #0078d4 0%, #00a3e0 100%);
+        min-height: 100vh;
+      }
+      
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+      
+      /* Header Section */
+      .header {
+        text-align: center;
+        padding: 60px 20px 40px;
+        color: white;
+      }
+      
+      .logo {
+        font-size: 48px;
+        margin-bottom: 20px;
+        animation: fadeInDown 1s ease;
+      }
+      
+      .header h1 {
+        font-size: 48px;
+        font-weight: 700;
+        margin-bottom: 15px;
+        animation: fadeInDown 1s ease 0.2s both;
+      }
+      
+      .header .tagline {
+        font-size: 24px;
+        font-weight: 300;
+        margin-bottom: 30px;
+        opacity: 0.95;
+        animation: fadeInDown 1s ease 0.4s both;
+      }
+      
+      .header .description {
+        font-size: 18px;
+        max-width: 700px;
+        margin: 0 auto 40px;
+        opacity: 0.9;
+        animation: fadeInDown 1s ease 0.6s both;
+      }
+      
+      /* CTA Button */
+      .cta-button {
+        display: inline-block;
+        background: white;
+        color: #0078d4;
+        padding: 18px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        transition: all 0.3s ease;
+        animation: fadeInUp 1s ease 0.8s both;
+      }
+      
+      .cta-button:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.3);
+        background: #f8f9ff;
+      }
+      
+      /* Main Content */
+      .main-content {
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        overflow: hidden;
+        margin-bottom: 40px;
+        animation: fadeInUp 1s ease 1s both;
+      }
+      
+      /* Features Section */
+      .features {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 30px;
+        padding: 60px 40px;
+        background: linear-gradient(to bottom, #f8f9ff 0%, white 100%);
+      }
+      
+      .feature {
+        text-align: center;
+        padding: 20px;
+      }
+      
+      .feature-icon {
+        font-size: 48px;
+        margin-bottom: 20px;
+        display: block;
+      }
+      
+      .feature h3 {
+        color: #0078d4;
+        font-size: 22px;
+        margin-bottom: 15px;
+      }
+      
+      .feature p {
+        color: #666;
+        font-size: 16px;
+        line-height: 1.6;
+      }
+      
+      /* Installation Section */
+      .installation {
+        padding: 60px 40px;
+        background: white;
+      }
+      
+      .installation h2 {
+        text-align: center;
+        color: #0078d4;
+        font-size: 36px;
+        margin-bottom: 20px;
+      }
+      
+      .installation-intro {
+        text-align: center;
+        color: #666;
+        font-size: 18px;
+        margin-bottom: 40px;
+        max-width: 600px;
+        margin-left: auto;
+        margin-right: auto;
+      }
+      
+      .download-box {
+        background: linear-gradient(135deg, #0078d4 0%, #00a3e0 100%);
+        color: white;
+        padding: 40px;
+        border-radius: 15px;
+        text-align: center;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 120, 212, 0.3);
+      }
+      
+      .download-box h3 {
+        font-size: 28px;
+        margin-bottom: 20px;
+      }
+      
+      .download-button {
+        display: inline-block;
+        background: white;
+        color: #0078d4;
+        padding: 18px 40px;
+        font-size: 18px;
+        font-weight: 600;
+        text-decoration: none;
+        border-radius: 50px;
+        margin-top: 20px;
+        transition: all 0.3s ease;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+      }
+      
+      .download-button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        background: #f8f9ff;
+      }
+      
+      /* Steps */
+      .steps {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+      
+      .step {
+        background: #f8f9ff;
+        padding: 30px;
+        border-radius: 12px;
+        border-left: 4px solid #0078d4;
+        transition: all 0.3s ease;
+      }
+      
+      .step:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 25px rgba(0, 120, 212, 0.2);
+      }
+      
+      .step-number {
+        display: inline-block;
+        background: #0078d4;
+        color: white;
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        text-align: center;
+        border-radius: 50%;
+        font-weight: 700;
+        font-size: 20px;
+        margin-bottom: 15px;
+      }
+      
+      .step h4 {
+        color: #333;
+        font-size: 18px;
+        margin-bottom: 10px;
+      }
+      
+      .step p {
+        color: #666;
+        font-size: 15px;
+      }
+      
+      code {
+        background: #e8e8e8;
+        padding: 3px 8px;
+        border-radius: 4px;
+        font-family: "Courier New", monospace;
+        font-size: 14px;
+      }
+      
+      /* Compatibility Section */
+      .compatibility {
+        background: #f8f9ff;
+        padding: 40px;
+        border-radius: 12px;
+        margin-top: 40px;
+        text-align: center;
+      }
+      
+      .compatibility h3 {
+        color: #0078d4;
+        font-size: 24px;
+        margin-bottom: 20px;
+      }
+      
+      .platform-icons {
+        display: flex;
+        justify-content: center;
+        gap: 40px;
+        margin-top: 30px;
+        flex-wrap: wrap;
+      }
+      
+      .platform {
+        text-align: center;
+      }
+      
+      .platform-icon {
+        font-size: 48px;
+        margin-bottom: 10px;
+        display: block;
+      }
+      
+      .platform-name {
+        color: #666;
+        font-size: 16px;
+        font-weight: 500;
+      }
+      
+      /* Footer */
+      footer {
+        text-align: center;
+        padding: 40px 20px;
+        color: white;
+        font-size: 14px;
+      }
+      
+      footer p {
+        opacity: 0.9;
+      }
+      
+      /* Animations */
+      @keyframes fadeInDown {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      @keyframes fadeInUp {
+        from {
+          opacity: 0;
+          transform: translateY(30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+      
+      /* Responsive Design */
+      @media (max-width: 768px) {
+        .header h1 {
+          font-size: 36px;
+        }
+        
+        .header .tagline {
+          font-size: 20px;
+        }
+        
+        .features {
+          grid-template-columns: 1fr;
+          padding: 40px 20px;
+        }
+        
+        .installation {
+          padding: 40px 20px;
+        }
+        
+        .steps {
+          grid-template-columns: 1fr;
+        }
+        
+        .platform-icons {
+          gap: 20px;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <!-- Header -->
+      <header class="header">
+        <div class="logo">✨📧</div>
+        <h1>Outlook ReVision</h1>
+        <p class="tagline">Transform Your Email Communication</p>
+        <p class="description">
+          Harness the power of AI to compose, revise, and translate emails with confidence. 
+          Write better emails faster with Azure OpenAI integration.
+        </p>
+        <a href="#install" class="cta-button">Get Started</a>
+      </header>
+
+      <!-- Main Content -->
+      <div class="main-content">
+        <!-- Features Section -->
+        <section class="features">
+          <div class="feature">
+            <span class="feature-icon">✍️</span>
+            <h3>AI-Powered Composition</h3>
+            <p>Generate professional emails from simple prompts. Let AI help you craft the perfect message every time.</p>
+          </div>
+          
+          <div class="feature">
+            <span class="feature-icon">🔄</span>
+            <h3>Smart Revisions</h3>
+            <p>Improve clarity, tone, and professionalism. Get instant suggestions to enhance your writing.</p>
+          </div>
+          
+          <div class="feature">
+            <span class="feature-icon">🌍</span>
+            <h3>Multi-Language Translation</h3>
+            <p>Translate emails seamlessly into multiple languages. Break down language barriers effortlessly.</p>
+          </div>
+          
+          <div class="feature">
+            <span class="feature-icon">⚡</span>
+            <h3>Context-Aware Replies</h3>
+            <p>Generate intelligent responses based on email context. Reply faster with AI-powered suggestions.</p>
+          </div>
+          
+          <div class="feature">
+            <span class="feature-icon">🌐</span>
+            <h3>Multilingual Interface</h3>
+            <p>Use the add-in in your preferred language. Full UI translation support for a localized experience worldwide.</p>
+          </div>
+          
+          <div class="feature">
+            <span class="feature-icon">🎯</span>
+            <h3>Tone Adjustment</h3>
+            <p>Adapt your message tone for any audience. Switch between formal, casual, or friendly styles instantly.</p>
+          </div>
+        </section>
+
+        <!-- Installation Section -->
+        <section class="installation" id="install">
+          <h2>Get Started in Minutes</h2>
+          <p class="installation-intro">
+            Install Outlook ReVision and start writing better emails today. 
+            Compatible with all Outlook platforms.
+          </p>
+
+          <div class="download-box">
+            <h3>📥 Download the Add-in Manifest</h3>
+            <p>Get the manifest file to install Outlook ReVision in your Outlook application.</p>
+            <a href="manifest.xml" download="outlook-revision-manifest.xml" class="download-button">
+              Download manifest.xml
+            </a>
+          </div>
+
+          <div class="steps">
+            <div class="step">
+              <span class="step-number">1</span>
+              <h4>Download Manifest</h4>
+              <p>Click the download button above to get the <code>manifest.xml</code> file.</p>
+            </div>
+            
+            <div class="step">
+              <span class="step-number">2</span>
+              <h4>Open Outlook</h4>
+              <p>Launch Outlook Desktop, Mac, or Web version and navigate to the Add-ins menu.</p>
+            </div>
+            
+            <div class="step">
+              <span class="step-number">3</span>
+              <h4>Add Custom Add-in</h4>
+              <p>Go to <strong>Get Add-ins</strong> → <strong>My add-ins</strong> → <strong>Add from file</strong>.</p>
+            </div>
+            
+            <div class="step">
+              <span class="step-number">4</span>
+              <h4>Install & Enjoy</h4>
+              <p>Select the downloaded manifest file, click Install, and start using ReVision!</p>
+            </div>
+          </div>
+
+          <!-- Compatibility -->
+          <div class="compatibility">
+            <h3>🎯 Works Everywhere</h3>
+            <p>Outlook ReVision is compatible with all major Outlook platforms</p>
+            <div class="platform-icons">
+              <div class="platform">
+                <span class="platform-icon">💻</span>
+                <div class="platform-name">Windows</div>
+              </div>
+              <div class="platform">
+                <span class="platform-icon">🍎</span>
+                <div class="platform-name">Mac</div>
+              </div>
+              <div class="platform">
+                <span class="platform-icon">🌐</span>
+                <div class="platform-name">Web</div>
+              </div>
+              <div class="platform">
+                <span class="platform-icon">📱</span>
+                <div class="platform-name">Mobile*</div>
+              </div>
+            </div>
+            <p style="margin-top: 20px; color: #999; font-size: 14px;">
+              *Mobile support may vary based on Office Add-in capabilities
+            </p>
+          </div>
+        </section>
+      </div>
+
+      <!-- Footer -->
+      <footer>
+        <p>&copy; 2025 Outlook ReVision. All rights reserved.</p>
+        <p style="margin-top: 10px; opacity: 0.8;">Powered by Azure OpenAI</p>
+      </footer>
+    </div>
+  </body>
+</html>

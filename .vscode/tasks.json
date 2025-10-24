@@ -1,0 +1,175 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Backend API",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["run"],
+      "options": {
+        "cwd": "${workspaceFolder}/src/api/FunCoding.ReVision/FunCoding.ReVision.WebApi"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "dotnet",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(\\w+):\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "code": 5,
+          "message": 6
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "^info: Microsoft\\.Hosting\\.Lifetime",
+          "endsPattern": "^\\s*Application started\\."
+        }
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Start Frontend Dev Server",
+      "type": "shell",
+      "command": "npm",
+      "args": ["run", "dev-server"],
+      "options": {
+        "cwd": "${workspaceFolder}/src/outlook-add-in/ReVision"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "dedicated",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "isBackground": true,
+      "problemMatcher": {
+        "owner": "webpack",
+        "pattern": {
+          "regexp": "^(.*):(\\d+):(\\d+):\\s+(warning|error)\\s+(.*)$",
+          "file": 1,
+          "line": 2,
+          "column": 3,
+          "severity": 4,
+          "message": 5
+        },
+        "background": {
+          "activeOnStart": true,
+          "beginsPattern": "webpack",
+          "endsPattern": "webpack compiled"
+        }
+      },
+      "runOptions": {
+        "instanceLimit": 1
+      }
+    },
+    {
+      "label": "Start Both Services",
+      "dependsOrder": "parallel",
+      "dependsOn": [
+        "Start Backend API",
+        "Start Frontend Dev Server"
+      ],
+      "group": {
+        "kind": "build",
+        "isDefault": true
+      },
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": true
+      }
+    },
+    {
+      "label": "Build Backend",
+      "type": "shell",
+      "command": "dotnet",
+      "args": ["build"],
+      "options": {
+        "cwd": "${workspaceFolder}/src/api/FunCoding.ReVision/FunCoding.ReVision.WebApi"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": "$msCompile"
+    },
+    {
+      "label": "Build Frontend",
+      "type": "npm",
+      "script": "build:dev",
+      "options": {
+        "cwd": "${workspaceFolder}/src/outlook-add-in/ReVision"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Install Frontend Dependencies",
+      "type": "npm",
+      "script": "install",
+      "options": {
+        "cwd": "${workspaceFolder}/src/outlook-add-in/ReVision"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": true,
+        "clear": false
+      },
+      "problemMatcher": []
+    },
+    {
+      "label": "Stop Outlook Add-in",
+      "type": "npm",
+      "script": "stop",
+      "options": {
+        "cwd": "${workspaceFolder}/src/outlook-add-in/ReVision"
+      },
+      "group": "build",
+      "presentation": {
+        "echo": true,
+        "reveal": "always",
+        "focus": false,
+        "panel": "shared",
+        "showReuseMessage": false,
+        "clear": false
+      },
+      "problemMatcher": []
+    }
+  ]
+}

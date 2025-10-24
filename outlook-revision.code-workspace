@@ -1,0 +1,46 @@
+{
+  "folders": [
+    {
+      "name": "Backend API",
+      "path": "./src/api/FunCoding.ReVision"
+    },
+    {
+      "name": "Outlook Add-in",
+      "path": "./src/outlook-add-in/ReVision"
+    },
+    {
+      "name": "Root",
+      "path": "."
+    }
+  ],
+  "settings": {
+    "typescript.preferences.includePackageJsonAutoImports": "auto",
+    "typescript.updateImportsOnFileMove.enabled": "always",
+    "eslint.workingDirectories": [
+      "src/outlook-add-in/ReVision"
+    ],
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/bin": true,
+      "**/obj": true,
+      "**/.git": true
+    },
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/bin": true,
+      "**/obj": true,
+      "**/.git": true
+    },
+    "dotnet.defaultSolution": "src/api/FunCoding.ReVision/FunCoding.ReVision.sln"
+  },
+  "extensions": {
+    "recommendations": [
+      "ms-dotnettools.csharp",
+      "ms-dotnettools.vscode-dotnet-runtime",
+      "msoffice.outlook-web",
+      "ms-vscode.vscode-typescript-next",
+      "dbaeumer.vscode-eslint",
+      "esbenp.prettier-vscode"
+    ]
+  }
+}

@@ -1,0 +1,160 @@
+{
+    "$schema": "https://developer.microsoft.com/json-schemas/teams/v1.17/MicrosoftTeams.schema.json",
+    "id": "53fceadc-72e5-4a39-aa71-fe5d263b52fa",
+    "manifestVersion": "1.17",
+    "version": "1.0.0",
+    "name": {
+        "short": "Outlook ReVision",
+        "full": "Outlook ReVision Add-in"
+    },
+    "description": {
+        "short": "Break language barriers with AI-powered email assistance",
+        "full": "Communicate globally with confidence. Outlook ReVision is an AI-powered multilingual email assistant that helps you write, revise, and translate messages in multiple languages. Perfect for international teams, global businesses, and anyone communicating across language barriers."
+    },
+    "developer": {
+        "name": "FUNCODING",
+        "websiteUrl": "https://revision.funcoding.nz",
+        "privacyUrl": "https://revision.funcoding.nz/assets/privacy.html",
+        "termsOfUseUrl": "https://revision.funcoding.nz/assets/terms.html"
+    },
+    "icons": {
+        "outline": "assets/outline.png",
+        "color": "assets/color.png"
+    },
+    "accentColor": "#230201",
+    "localizationInfo": {
+        "defaultLanguageTag": "en-us",
+        "additionalLanguages": []
+    },
+    "authorization": {
+        "permissions": {
+            "resourceSpecific": [
+                {
+                    "name": "Mailbox.ReadWrite.User",
+                    "type": "Delegated"
+                }
+            ]
+        }
+    },
+    "validDomains": [
+        "localhost",
+        "127.0.0.1"
+    ],
+    "extensions": [
+        {
+            "requirements": {
+                "scopes": [
+                    "mail"
+                ],
+                "capabilities": [
+                    {
+                        "name": "Mailbox",
+                        "minVersion": "1.3"
+                    }
+                ]
+            },
+            "runtimes": [
+                {
+                    "requirements": {
+                        "capabilities": [
+                            {
+                                "name": "Mailbox",
+                                "minVersion": "1.3"
+                            }
+                        ]
+                    },
+                    "id": "TaskPaneRuntime",
+                    "type": "general",
+                    "code": {
+                        "page": "https://localhost:3000/taskpane.html"
+                    },
+                    "lifetime": "short",
+                    "actions": [
+                        {
+                            "id": "TaskPaneRuntimeShow",
+                            "type": "openPage",
+                            "pinnable": false,
+                            "view": "dashboard"
+                        }
+                    ]
+                },
+                {
+                    "id": "CommandsRuntime",
+                    "type": "general",
+                    "code": {
+                        "page": "https://localhost:3000/commands.html",
+                        "script": "https://localhost:3000/commands.js"
+                    },
+                    "lifetime": "short",
+                    "actions": [
+                        {
+                            "id": "action",
+                            "type": "executeFunction"
+                        }
+                    ]
+                }
+            ],
+            "ribbons": [
+                {
+                    "contexts": [
+                        "mailCompose",
+                        "mailRead",
+                        "meetingDetailsOrganizer",
+                        "meetingDetailsAttendee"
+                    ],
+                    "tabs": [
+                        {
+                            "builtInTabId": "TabDefault",
+                            "groups": [
+                                {
+                                    "id": "msgComposeGroup",
+                                    "label": "ReVision Add-in",
+                                    "icons": [
+                                        {
+                                            "size": 16,
+                                            "url": "https://localhost:3000/assets/icon-16.png"
+                                        },
+                                        {
+                                            "size": 32,
+                                            "url": "https://localhost:3000/assets/icon-32.png"
+                                        },
+                                        {
+                                            "size": 80,
+                                            "url": "https://localhost:3000/assets/icon-80.png"
+                                        }
+                                    ],
+                                    "controls": [
+                                        {
+                                            "id": "msgComposeOpenPaneButton",
+                                            "type": "button",
+                                            "label": "Show Task Pane",
+                                            "icons": [
+                                                {
+                                                    "size": 16,
+                                                    "url": "https://localhost:3000/assets/icon-16.png"
+                                                },
+                                                {
+                                                    "size": 32,
+                                                    "url": "https://localhost:3000/assets/icon-32.png"
+                                                },
+                                                {
+                                                    "size": 80,
+                                                    "url": "https://localhost:3000/assets/icon-80.png"
+                                                }
+                                            ],
+                                            "supertip": {
+                                                "title": "Show Task Pane",
+                                                "description": "Opens a task pane."
+                                            },
+                                            "actionId": "TaskPaneRuntimeShow"
+                                        }
+                                    ]
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        }
+    ]
+}

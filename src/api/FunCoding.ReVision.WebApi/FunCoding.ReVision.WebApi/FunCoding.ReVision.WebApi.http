@@ -1,0 +1,6 @@
+@FunCoding.ReVision.WebApi_HostAddress = http://localhost:5298
+
+GET {{FunCoding.ReVision.WebApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

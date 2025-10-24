@@ -1,0 +1,23 @@
+{
+  "typescript.preferences.includePackageJsonAutoImports": "auto",
+  "typescript.updateImportsOnFileMove.enabled": "always",
+  "eslint.workingDirectories": [
+    "src/outlook-add-in/ReVision"
+  ],
+  "files.exclude": {
+    "**/node_modules": true,
+    "**/bin": true,
+    "**/obj": true,
+    "**/.git": true
+  },
+  "search.exclude": {
+    "**/node_modules": true,
+    "**/bin": true,
+    "**/obj": true,
+    "**/.git": true
+  },
+  "dotnet.defaultSolution": "src/api/FunCoding.ReVision/FunCoding.ReVision.sln",
+  "dotnet.completion.showCompletionItemsFromUnimportedNamespaces": true,
+  "omnisharp.enableEditorConfigSupport": true,
+  "omnisharp.enableRoslynAnalyzers": true
+}

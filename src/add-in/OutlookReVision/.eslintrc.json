@@ -1,0 +1,27 @@
+{
+  "plugins": [
+    "office-addins"
+  ],
+  "extends": [
+    "plugin:office-addins/react"
+  ],
+  "env": {
+    "browser": true,
+    "es2021": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 12,
+    "sourceType": "module"
+  },
+  "globals": {
+    "Office": "readonly",
+    "process": "readonly",
+    "globalThis": "readonly",
+    "fetch": "readonly",
+    "console": "readonly",
+    "navigator": "readonly",
+    "localStorage": "readonly",
+    "setTimeout": "readonly",
+    "HTMLImageElement": "readonly"
+  }
+}
