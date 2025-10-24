@@ -187,6 +187,9 @@ ClientBin/
 node_modules/
 orleans.codegen.cs
 
+# Build output directories
+dist/
+
 # RIA/Silverlight projects
 Generated_Code/
 
@@ -249,3 +252,7 @@ ModelManifest.xml
 *.db
 *.db-shm
 *.db-wal
+
+# Environment files
+.env.local
+.env
