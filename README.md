@@ -392,7 +392,7 @@ For issues or questions, please create an issue in the repository.
 
 ```mermaid
 graph TB
-    subgraph Frontend["Frontend Layer (Outlook Add-in)"]
+    subgraph Frontend["Outlook Add-in"]
         User[User]
         Outlook[Outlook Editor]
         SPA[React SPA Task Pane]
