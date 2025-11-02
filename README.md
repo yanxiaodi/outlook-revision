@@ -387,3 +387,50 @@ For issues or questions, please create an issue in the repository.
 ## Demo Video
 
 [![Watch the video](https://i.ytimg.com/vi/4vLzl5jOKsk/hqdefault.jpg?sqp=-oaymwE2CNACELwBSFXyq4qpAygIARUAAIhCGAFwAcABBvABAfgB_gmAAtAFigIMCAAQARgnICQofzAP&rs=AOn4CLBenUzB_cnoREFWZ4xh43fZUwVsKw)](https://youtu.be/4vLzl5jOKsk)
+
+## Diagram
+
+```mermaid
+graph TB
+    subgraph Frontend["Frontend Layer (Outlook Add-in)"]
+        User[User]
+        Outlook[Outlook Editor]
+        SPA[React SPA Task Pane]
+        i18n[i18n Module<br/>30+ Locales]
+    end
+    
+    subgraph Backend["Backend Services"]
+        API[Web API<br/>OutlookController<br/>FeedbackController]
+        IReVision[IReVisionService Interface]
+        SK[Semantic Kernel<br/>Orchestration Layer]
+        OpenAI[Azure OpenAI<br/>ChatCompletion API]
+    end
+    
+    subgraph Observability["Observability & Monitoring"]
+        Serilog[Serilog Logger]
+        AppInsights[Application Insights<br/>Logs, Metrics, Traces]
+    end
+    
+    User --> Outlook
+    Outlook <--> SPA
+    SPA <--> i18n
+    SPA -->|HTTP POST| API
+    API --> IReVision
+    IReVision --> SK
+    SK --> OpenAI
+    API --> Serilog
+    Serilog --> AppInsights
+    
+    Note1[Translate Flow]
+    Note2[Reply Flow]
+    Note3[Compose Flow]
+    Note4[Revise Flow]
+    
+    SPA -.- Note1
+    SPA -.- Note2
+    SPA -.- Note3
+    SPA -.- Note4
+    
+    click API "d:/dev/outlook-revision/src/api/FunCoding.ReVision.WebApi/FunCoding.ReVision.WebApi/Controllers/OutlookController.cs#L8"
+    click IReVision "d:/dev/outlook-revision/src/api/FunCoding.ReVision.WebApi/FunCoding.ReVision.WebApi/Contracts/IReVisionService.cs#L6"
+```
